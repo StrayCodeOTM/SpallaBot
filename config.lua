@@ -1,102 +1,188 @@
+ -- For details on configuration values, see README.md#configuration.
 return {
-	bot_api_key = '',
-	google_api_key = '',
-	google_cse_key = '',
-	lastfm_api_key = '',
-	owm_api_key = '',
-	biblia_api_key = '',
-	thecatapi_key = '',
-	time_offset = 0,
-	lang = 'en',
-	admin = 00000000,
-	admin_name = 'John Smith',
-	about_text = [[
-I am otouto, the plugin-wielding, multi-purpose Telegram bot written by topkecleon.
+
+    -- Your authorization token from the botfather.
+    bot_api_key = nil,
+    -- Your Telegram ID.
+    admin = nil,
+    -- Two-letter language code.
+    -- Fetches it from the system if available, or defaults to English.
+    lang = os.getenv('LANG') and os.getenv('LANG'):sub(1,2) or 'en',
+    -- The channel, group, or user to send error reports to.
+    -- If this is not set, errors will be printed to the console.
+    log_chat = nil,
+    -- The port used to communicate with tg for administration.lua.
+    -- If you change this, make sure you also modify launch-tg.sh.
+    cli_port = 4567,
+    -- The symbol that starts a command. Usually noted as '/' in documentation.
+    cmd_pat = '/',
+    -- If drua is used, should a user be blocked when he's blacklisted?
+    drua_block_on_blacklist = false,
+    -- The filename of the database. If left nil, defaults to $username.db.
+    database_name = nil,
+    -- The block of text returned by /start and /about..
+    about_text = [[
+I am otouto, the plugin-wielding, multipurpose Telegram bot.
 
 Send /help to get started.
+    ]],
 
-Join my channel for news about updates!
-telegram.me/otouto
-]]	,
-	errors = {
-		connection = 'Connection error.',
-		results = 'No results found.',
-		argument = 'Invalid argument.',
-		syntax = 'Invalid syntax.',
-		antisquig = 'This group is English only.',
-		moderation = 'I do not moderate this group.',
-		not_mod = 'This command must be run by a moderator.',
-		not_admin = 'This command must be run by an administrator.',
-		chatter_connection = 'I don\'t feel like talking right now.',
-		chatter_response = 'I don\'t know what to say to that.'
-	},
-	greetings = {
-		['Hello, #NAME.'] = {
-			'hello',
-			'hey',
-			'sup',
-			'hi',
-			'good morning',
-			'good day',
-			'good afternoon',
-			'good evening'
-		},
-		['Goodbye, #NAME.'] = {
-			'bye',
-			'later',
-			'see ya',
-			'good night'
-		},
-		['Welcome back, #NAME.'] = {
-			'i\'m home',
-			'i\'m back'
-		},
-		['You\'re welcome, #NAME.'] = {
-			'thanks',
-			'thank you'
-		}
-	},
-	moderation = {
-		admins = {
-			['00000000'] = 'You'
-		},
-		admin_group = -00000000,
-		realm_name = 'My Realm'
-	},
-	plugins = {
-		'blacklist.lua',
-		'floodcontrol.lua',
-		'control.lua',
-		'about.lua',
-		'ping.lua',
-		'whoami.lua',
-		'nick.lua',
-		'echo.lua',
-		'gSearch.lua',
-		'gImages.lua',
-		'gMaps.lua',
-		'youtube.lua',
-		'wikipedia.lua',
-		'hackernews.lua',
-		'imdb.lua',
-		'calc.lua',
-		'urbandictionary.lua',
-		'time.lua',
-		'eightball.lua',
-		'reactions.lua',
-		'dice.lua',
-		'reddit.lua',
-		'xkcd.lua',
-		'slap.lua',
-		'commit.lua',
-		'pun.lua',
-		'pokedex.lua',
-		'bandersnatch.lua',
-		'currency.lua',
-		'cats.lua',
-		'shout.lua',
-		-- Put new plugins here.
-		'help.lua',
-		'greetings.lua'
-	}
+    errors = { -- Generic error messages.
+        generic = 'An unexpected error occurred.',
+        connection = 'Connection error.',
+        results = 'No results found.',
+        argument = 'Invalid argument.',
+        syntax = 'Invalid syntax.'
+    },
+
+    -- https://datamarket.azure.com/dataset/bing/search
+    bing_api_key = nil,
+    -- http://console.developers.google.com
+    google_api_key = nil,
+    -- https://cse.google.com/cse
+    google_cse_key = nil,
+    -- http://openweathermap.org/appid
+    owm_api_key = nil,
+    -- http://last.fm/api
+    lastfm_api_key = nil,
+    -- http://api.biblia.com
+    biblia_api_key = nil,
+    -- http://thecatapi.com/docs.html
+    thecatapi_key = nil,
+    -- http://api.nasa.gov
+    nasa_api_key = nil,
+    -- http://tech.yandex.com/keys/get
+    yandex_key = nil,
+    -- Interval (in minutes) for hackernews.lua to update.
+    hackernews_interval = 60,
+    -- Whether hackernews.lua should update at load/reload.
+    hackernews_onstart = false,
+    -- Whether luarun should use serpent instead of dkjson for serialization.
+    luarun_serpent = false,
+
+    remind = {
+        persist = true,
+        max_length = 1000,
+        max_duration = 526000,
+        max_reminders_group = 10,
+        max_reminders_private = 50
+    },
+
+    cleverbot = {
+        cleverbot_api = 'https://brawlbot.tk/apis/chatter-bot-api/cleverbot.php?text=',
+        connection = 'I don\'t feel like talking right now.',
+        response = 'I don\'t know what to say to that.'
+    },
+
+    greetings = {
+        ["Hello, #NAME."] = {
+            "hello",
+            "hey",
+            "hi",
+            "good morning",
+            "good day",
+            "good afternoon",
+            "good evening"
+        },
+        ["Goodbye, #NAME."] = {
+            "good%-?bye",
+            "bye",
+            "later",
+            "see ya",
+            "good night"
+        },
+        ["Welcome back, #NAME."] = {
+            "i'm home",
+            "i'm back"
+        },
+        ["You're welcome, #NAME."] = {
+            "thanks",
+            "thank you"
+        }
+    },
+
+    reactions = {
+        ['shrug'] = '¯\\_(ツ)_/¯',
+        ['lenny'] = '( ͡° ͜ʖ ͡°)',
+        ['flip'] = '(╯°□°）╯︵ ┻━┻',
+        ['look'] = 'ಠ_ಠ',
+        ['shots'] = 'SHOTS FIRED',
+        ['facepalm'] = '(－‸ლ)'
+    },
+
+    administration = {
+        -- Conversation, group, or channel for kick/ban notifications.
+        -- Defaults to config.log_chat if left empty.
+        log_chat = nil,
+        -- Default autoban setting.
+        -- A user is banned after being autokicked this many times in a day.
+        autoban = 3,
+        -- Default antiflood values.
+        antiflood = {
+            text = 5,
+            voice = 5,
+            audio = 5,
+            contact = 5,
+            photo = 10,
+            video = 10,
+            location = 10,
+            document = 10,
+            sticker = 20
+        },
+        -- Default flag settings.
+        flags = {
+            -- unlisted
+            [1] = false,
+            -- antisquig
+            [2] = false,
+            -- antisquig++
+            [3] = false,
+            -- antibot
+            [4] = false,
+            --antiflood
+            [5] = false,
+            -- antihammer
+            [6] = false,
+            -- nokicklog
+            [7] = false,
+            -- antilink
+            [8] = false,
+            -- modrights
+            [9] = false
+        }
+    },
+
+    plugins = { -- To enable a plugin, add its name to the list.
+        'users',
+        'end_forwards',
+        'blacklist',
+        'about',
+        'calc',
+        'cats',
+        'colorhex',
+        'commit',
+        'control',
+        'currency',
+        'dice',
+        'echo',
+        'eightball',
+        'location',
+        'hackernews',
+        'imdb',
+        'me',
+        'nick',
+        'ping',
+        'pun',
+        'reddit',
+        'shout',
+        'slap',
+        'time',
+        'urbandictionary',
+        'whoami',
+        'wikipedia',
+        'xkcd',
+        -- Add new plugins here.
+        'help'
+    }
+
 }
